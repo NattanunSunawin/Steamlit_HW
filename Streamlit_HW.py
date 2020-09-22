@@ -17,10 +17,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import folium as fo
-import geopandas as gp
 import altair as alt
 import pydeck as pdk
+import folium as fo
+import geopandas as gp
 from streamlit_folium import folium_static
 
 
@@ -29,17 +29,17 @@ st.markdown("Homework streamlit Nattanun Sunawin 6030807821")
 st.markdown("Select date at sidebar on leftside")
 
 # Lookup for mapped dated-data
-select_date = st.sidebar.selectbox('Date :' , ['1 January 2019','2 January 2019','3 January 2019','4 January 2019','5 January 2019'])
+select_date = st.sidebar.selectbox('Date :' , ['1-Jan-2019','2-Jan-2019','3-Jan-2019','4-Jan-2019','5-Jan-2019'])
 DATED_DATA = {
-            "1 January 2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190101.csv",
-            "2 January 2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190102.csv",
-            "3 January 2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190103.csv",
-            "4 January 2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190104.csv",
-            "5 January 2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190105.csv"
+            "1-Jan-2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190101.csv",
+            "2-Jan-2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190102.csv",
+            "3-Jan-2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190103.csv",
+            "4-Jan-2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190104.csv",
+            "5-Jan-2019" : "https://raw.githubusercontent.com/NattanunSunawin/Steamlit_HW/master/Data/20190105.csv"
             }
 DATA_URL = DATED_DATA[select_date]
 
-# Import DATA_URL
+# Import DATA
 DATE_TIME = "timestart"
 @st.cache(persist=True)
 def load_data(nrows):
@@ -50,7 +50,7 @@ def load_data(nrows):
     return data
 data = load_data(100000)
 
-# Create slidebar for raw data and Map
+# Create slidebar
 hour = st.slider("Lookup Hour", 0, 23,0,3)  #start,stop,begin,step
 data = data[data[DATE_TIME].dt.hour == hour]
 
@@ -84,7 +84,7 @@ for lat, lon,t, label in zip(latitudes, longitudes,time, labels):
         fo.Marker(
           location = [lat, lon], 
           popup = [label,lat,lon,t],
-          icon = fo.Icon(color="orange", icon="heart")
+          icon = fo.Icon(color="blue", icon="map-marker")
          ).add_to(station_map)
 folium_static(station_map)
 
@@ -107,7 +107,7 @@ st.write(pdk.Deck(
             get_position=["lonstartl", "latstartl"],
             radius=100,
             elevation_scale=4,
-            elevation_range=[0, 1100],
+            elevation_range=[0, 1000],
             pickable=True,
             extruded=True,
         ),
@@ -130,5 +130,3 @@ st.altair_chart(alt.Chart(chart_data)
         y=alt.Y("pickups:Q"),
         tooltip=['minute', 'pickups']
     ), use_container_width=True)
-
-st.markdown("Complete")
